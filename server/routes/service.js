@@ -1,13 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const Service = require("../models/Service");
 
 router.get("/", async (req, res) => {
   try {
-    const service = await Service.findOne(); // Assuming only one document
-    res.json(service);
+    // Fetch all services from the "services" collection
+    const services = await req.app.locals.db
+      .collection("services")
+      .find({})
+      .toArray();
+
+    res.json(services);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch service info" });
+    res.status(500).json({ error: "Server error." });
   }
 });
 
