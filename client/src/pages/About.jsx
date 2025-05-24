@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { FaReact, FaNodeJs } from "react-icons/fa";
-import { SiTailwindcss, SiJavascript, SiExpress, SiOpensourceinitiative, SiPhotobucket } from "react-icons/si";
+import {
+  SiTailwindcss,
+  SiJavascript,
+  SiExpress,
+  SiOpensourceinitiative,
+  SiPhotobucket,
+} from "react-icons/si";
 import { MdDesignServices } from "react-icons/md";
 
 // Icon mapping helpers
@@ -8,22 +14,22 @@ const skillIcons = {
   React: <FaReact color="#61DBFB" />,
   "Tailwind CSS": <SiTailwindcss color="#38BDF8" />,
   "Node.js": <FaNodeJs color="#339933" />,
-  "Express": <SiExpress color="#fff" />,
-  "JavaScript": <SiJavascript color="#f7df1e" />,
+  Express: <SiExpress color="#fff" />,
+  JavaScript: <SiJavascript color="#f7df1e" />,
 };
 
 const interestIcons = {
   "UI/UX Design": <MdDesignServices color="#ff57b2" />,
   "Open Source": <SiOpensourceinitiative color="#3ec6f6" />,
-  "Photography": <SiPhotobucket color="#a165f7" />,
+  Photography: <SiPhotobucket color="#a165f7" />,
 };
 
 const About = () => {
-  // Place all Hooks at the top level
+  // All hooks called at the top level, unconditionally
   const [aboutData, setAboutData] = useState(null);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
 
-  // Fetch about data
+  // Fetch about data from backend
   useEffect(() => {
     fetch("http://localhost:5000/api/about")
       .then((res) => res.json())
@@ -31,7 +37,7 @@ const About = () => {
       .catch(() => setAboutData(null));
   }, []);
 
-  // Parallax effect
+  // Parallax effect for background image
   useEffect(() => {
     const handleMouseMove = (e) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 40;
@@ -42,13 +48,27 @@ const About = () => {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Early return after all hooks
+  // Early return for loading state
   if (!aboutData)
     return (
-      <div style={{ minHeight: 300, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div
+        style={{
+          minHeight: 300,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         Loading...
       </div>
     );
+
+  // Defensive fallback for hero/background
+  const hero = aboutData.hero || {};
+  const gradient = hero.gradient || "linear-gradient(90deg, #ff57b2 20%, #a165f7 60%, #3ec6f6 100%)";
+  const background =
+    hero.background ||
+    "radial-gradient(circle at 70% 40%, #30235a 0%, #191b2a 70%)";
 
   return (
     <div
@@ -57,7 +77,7 @@ const About = () => {
         minWidth: "100vw",
         position: "relative",
         fontFamily: "'Inter', sans-serif",
-        background: "radial-gradient(circle at 70% 40%, #30235a 0%, #191b2a 70%)",
+        background,
         overflow: "hidden",
       }}
     >
@@ -75,6 +95,7 @@ const About = () => {
           borderRadius: "32px",
           boxShadow: "0 8px 48px #0006",
           transition: "transform 0.6s cubic-bezier(.22,1,.36,1)",
+          pointerEvents: "none",
         }}
       >
         <img
@@ -86,6 +107,8 @@ const About = () => {
             objectFit: "cover",
             filter: "brightness(0.62) blur(2.5px) grayscale(12%)",
             transition: "filter 0.3s",
+            userSelect: "none",
+            pointerEvents: "none",
           }}
           draggable="false"
         />
@@ -93,9 +116,12 @@ const About = () => {
         <div
           style={{
             position: "absolute",
-            top: 0, left: 0,
-            width: "100%", height: "100%",
-            background: "linear-gradient(108deg, rgba(24,20,36,0.90) 58%, rgba(24,20,36,0.16) 100%)",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background:
+              "linear-gradient(108deg, rgba(24,20,36,0.90) 58%, rgba(24,20,36,0.16) 100%)",
             zIndex: 2,
           }}
         />
@@ -146,96 +172,111 @@ const About = () => {
             fontWeight: 800,
             letterSpacing: "-2px",
             marginBottom: 10,
-            background: aboutData.hero?.gradient || "linear-gradient(90deg, #ff57b2 20%, #a165f7 60%, #3ec6f6 100%)",
+            background: gradient,
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             lineHeight: 1.08,
           }}
         >
-          {aboutData.hero?.headline || "FRONTEND DEVELOPER"}
+          {hero.headline || "FRONTEND DEVELOPER"}
         </h1>
-        <p style={{
-          fontSize: "clamp(1.1rem, 2.4vw, 1.7rem)",
-          color: "#e3e3e9",
-          marginBottom: 24,
-          maxWidth: 540,
-          lineHeight: 1.45,
-        }}>
-          {aboutData.hero?.intro || `I am ${aboutData.title} – web-developer with a passion for creating beautiful and responsive websites.`}
+        <p
+          style={{
+            fontSize: "clamp(1.1rem, 2.4vw, 1.7rem)",
+            color: "#e3e3e9",
+            marginBottom: 24,
+            maxWidth: 540,
+            lineHeight: 1.45,
+          }}
+        >
+          {hero.intro ||
+            "I am a web-developer with a passion for creating beautiful and responsive websites."}
         </p>
 
         {/* Skills with icons */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 20 }}>
-          {aboutData.skills?.map((skill) => (
-            <span
-              key={skill}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 5,
-                background: "#232843",
-                color: "#a2b3e1",
-                borderRadius: 18,
-                padding: "7px 16px",
-                fontSize: "1.07rem",
-                fontWeight: 500,
-                boxShadow: "0 1px 8px #191b2a33",
-                transition: "background .17s",
-              }}
-            >
-              {skillIcons[skill] || null}
-              {skill}
-            </span>
-          ))}
-        </div>
+        {aboutData.skills && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 20 }}>
+            {aboutData.skills.map((skill) => (
+              <span
+                key={skill}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
+                  background: "#232843",
+                  color: "#a2b3e1",
+                  borderRadius: 18,
+                  padding: "7px 16px",
+                  fontSize: "1.07rem",
+                  fontWeight: 500,
+                  boxShadow: "0 1px 8px #191b2a33",
+                  transition: "background .17s",
+                }}
+              >
+                {skillIcons[skill] || null}
+                {skill}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Interests with icons */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 38 }}>
-          {aboutData.interests?.map((interest) => (
-            <span
-              key={interest}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 5,
-                background: "#23172b",
-                color: "#f7bff8",
-                borderRadius: 18,
-                padding: "7px 16px",
-                fontSize: "1.07rem",
-                fontWeight: 500,
-                boxShadow: "0 1px 8px #3ec6f655",
-              }}
-            >
-              {interestIcons[interest] || null}
-              {interest}
-            </span>
-          ))}
-        </div>
+        {aboutData.interests && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 38 }}>
+            {aboutData.interests.map((interest) => (
+              <span
+                key={interest}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
+                  background: "#23172b",
+                  color: "#f7bff8",
+                  borderRadius: 18,
+                  padding: "7px 16px",
+                  fontSize: "1.07rem",
+                  fontWeight: 500,
+                  boxShadow: "0 1px 8px #3ec6f655",
+                }}
+              >
+                {interestIcons[interest] || null}
+                {interest}
+              </span>
+            ))}
+          </div>
+        )}
 
-        <a
-          href={aboutData.hero?.cta?.link || "#contact"}
-          style={{
-            display: "inline-block",
-            padding: "18px 48px",
-            borderRadius: 32,
-            fontWeight: 700,
-            fontSize: "1.18rem",
-            color: "#fff",
-            background: aboutData.hero?.gradient || "linear-gradient(90deg,#3ec6f6 0%, #ff57b2 100%)",
-            border: "none",
-            boxShadow: "0 2px 24px #3ec6f633",
-            textDecoration: "none",
-            marginTop: 8,
-            pointerEvents: "all",
-            transition: "filter 0.18s, box-shadow .2s",
-            filter: "drop-shadow(0 2px 16px #3ec6f655)",
-          }}
-          onMouseOver={e => { e.currentTarget.style.filter = "brightness(1.15)"; e.currentTarget.style.boxShadow = "0 4px 32px #ff57b2cc"; }}
-          onMouseOut={e => { e.currentTarget.style.filter = "none"; e.currentTarget.style.boxShadow = "0 2px 24px #3ec6f633"; }}
-        >
-          {aboutData.hero?.cta?.label || "VIEW MY WORK"}
-        </a>
+        {hero.cta && (
+          <a
+            href={hero.cta.link || "#contact"}
+            style={{
+              display: "inline-block",
+              padding: "18px 48px",
+              borderRadius: 32,
+              fontWeight: 700,
+              fontSize: "1.18rem",
+              color: "#fff",
+              background: gradient,
+              border: "none",
+              boxShadow: "0 2px 24px #3ec6f633",
+              textDecoration: "none",
+              marginTop: 8,
+              pointerEvents: "all",
+              transition: "filter 0.18s, box-shadow .2s",
+              filter: "drop-shadow(0 2px 16px #3ec6f655)",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.filter = "brightness(1.15)";
+              e.currentTarget.style.boxShadow = "0 4px 32px #ff57b2cc";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.filter = "none";
+              e.currentTarget.style.boxShadow = "0 2px 24px #3ec6f633";
+            }}
+          >
+            {hero.cta.label || "VIEW MY WORK"}
+          </a>
+        )}
       </section>
 
       {/* Responsive and animated background CSS */}
