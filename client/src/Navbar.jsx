@@ -218,7 +218,7 @@ export default function Navbar() {
     <nav style={navStyle}>
       <div style={containerStyle}>
         <Link to="/" style={brandStyle} tabIndex={0}>
-          MyBrand
+          LINUXe native
         </Link>
         {/* Desktop links */}
         <div style={responsive.navLinks}>
