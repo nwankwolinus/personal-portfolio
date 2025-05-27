@@ -19,29 +19,68 @@ const containerStyle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  padding: "22px 48px",
+  padding: "8px 20px",
 };
 
-const brandStyle = {
-  fontSize: "2.6rem",
-  fontWeight: "bold",
-  color: "#ec4899",
+const logoColumnStyle = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
   textDecoration: "none",
+  userSelect: "none",
+  lineHeight: 1,
+  position: "relative"
+};
+
+const logoImageStyle = {
+  height: 60,
+  width: 60,
+  objectFit: "contain",
+  background: "transparent",
+  borderRadius: 0,
+  boxShadow: "none",
+  display: "block",
+  zIndex: 1,
+  position: "relative"
+};
+
+const brandBarStyle = {
+  fontFamily: "'Orbitron', 'Inter', sans-serif",
+  fontWeight: 600,
+  fontSize: "12px",
   letterSpacing: "1px",
+  background: "linear-gradient(90deg, #ff57b2 20%, #a165f7 60%, #3ec6f6 100%)",
+  WebkitBackgroundClip: "text",
+  WebkitTextFillColor: "transparent",
+  color: "#ec4899",
+  margin: 0,
+  textAlign: "center",
+  textShadow: "0 2px 8px #23243d33",
+  lineHeight: "1.12",
+  padding: 0,
+  border: "none",
+  display: "inline-block",
+  position: "absolute",
+  top: "60%",
+  left: "50%",
+  transform: "translate(-50%, 0)",
+  zIndex: 2,
+  pointerEvents: "none",
+  whiteSpace: "nowrap",
 };
 
 const navLinksStyle = {
   display: "flex",
-  gap: "34px",
+  gap: "22px",
 };
 
 const linkBase = {
-  padding: "10px 28px",
+  padding: "8px 14px",
   borderRadius: "10px",
   fontWeight: 500,
   textDecoration: "none",
   color: "#e5e7eb",
-  fontSize: "1.11rem",
+  fontSize: "1rem",
   transition: "all 0.15s",
   outline: "none",
   border: "none",
@@ -60,17 +99,19 @@ const hoverLink = {
   color: "#ec4899",
 };
 
+// Hamburger menu styles
 const hamburgerStyle = {
   display: "none",
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  width: 36,
-  height: 36,
+  width: 40,
+  height: 40,
   cursor: "pointer",
   background: "none",
   border: "none",
-  zIndex: 70,
+  zIndex: 90,
+  marginLeft: 8,
 };
 
 const barStyle = {
@@ -80,32 +121,36 @@ const barStyle = {
   margin: "4px 0",
   borderRadius: 2,
   transition: "all 0.3s",
+  display: "block",
 };
 
-// --- Responsive and Animation styles ---
 const getResponsiveStyles = (menuOpen) => {
+  const MOBILE_BREAKPOINT = 760;
+  const windowWidth = typeof window !== "undefined" ? window.innerWidth : 1200;
+
   const baseMobileMenu = {
     position: "fixed",
     top: 0,
     right: 0,
-    minWidth: 210,
-    borderRadius: "0 0 0 18px",
+    minWidth: 190,
+    maxWidth: "75vw",
+    borderRadius: "0 0 0 14px",
     boxShadow: "0 8px 24px rgba(0,0,0,0.22)",
     background: "rgba(25,27,42,0.98)",
-    padding: "32px 32px 32px 28px",
-    gap: "22px",
+    padding: "24px 18px 24px 16px",
+    gap: "12px",
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-end",
-    zIndex: 80,
+    zIndex: 120,
     transform: menuOpen ? "translateY(0%)" : "translateY(-24px)",
     opacity: menuOpen ? 1 : 0,
     pointerEvents: menuOpen ? "auto" : "none",
     transition: "opacity 0.32s cubic-bezier(.4,2,.6,1), transform 0.32s cubic-bezier(.4,2,.6,1)",
+    minHeight: "140px"
   };
 
-  // Hamburger shows, nav links hide on mobile
-  if (window.innerWidth < 820) {
+  if (windowWidth < MOBILE_BREAKPOINT) {
     return {
       navLinks: { display: "none" },
       hamburger: { display: "flex" },
@@ -115,7 +160,7 @@ const getResponsiveStyles = (menuOpen) => {
         position: "fixed",
         inset: 0,
         background: "rgba(30,25,40,0.53)",
-        zIndex: 70,
+        zIndex: 110,
         opacity: menuOpen ? 1 : 0,
         transition: "opacity 0.3s",
         pointerEvents: menuOpen ? "auto" : "none",
@@ -123,14 +168,14 @@ const getResponsiveStyles = (menuOpen) => {
       closeIcon: {
         display: "block",
         position: "absolute",
-        top: 18,
-        right: 18,
-        width: 32,
-        height: 32,
+        top: 10,
+        right: 7,
+        width: 18,
+        height: 18,
         cursor: "pointer",
         background: "none",
         border: "none",
-        zIndex: 100,
+        zIndex: 130,
         padding: 0,
         outline: "none",
       },
@@ -138,8 +183,8 @@ const getResponsiveStyles = (menuOpen) => {
         position: "absolute",
         left: "50%",
         top: "50%",
-        width: 28,
-        height: 4,
+        width: 14,
+        height: 2,
         background: "#ec4899",
         borderRadius: 2,
         transform: "translate(-50%, -50%) rotate(45deg)",
@@ -149,8 +194,8 @@ const getResponsiveStyles = (menuOpen) => {
         position: "absolute",
         left: "50%",
         top: "50%",
-        width: 28,
-        height: 4,
+        width: 14,
+        height: 2,
         background: "#ec4899",
         borderRadius: 2,
         transform: "translate(-50%, -50%) rotate(-45deg)",
@@ -173,29 +218,27 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [responsive, setResponsive] = useState(getResponsiveStyles(false));
 
-  // Handle responsiveness and menu animation state on window resize
   useEffect(() => {
     function handleResize() {
       setResponsive(getResponsiveStyles(menuOpen));
-      if (window.innerWidth >= 820) setMenuOpen(false);
+      if (window.innerWidth >= 760) setMenuOpen(false);
     }
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [menuOpen]);
 
-  // Animate overlay and menu on open
   useEffect(() => {
     setResponsive(getResponsiveStyles(menuOpen));
-    // Prevent body scroll when menu open
     if (menuOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
     }
-    return () => { document.body.style.overflow = ""; }
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [menuOpen]);
 
-  // Helper for NavLink
   const handleMouseOver = (e) => Object.assign(e.target.style, hoverLink);
   const handleMouseOut = (e) => {
     if (e.target.classList.contains("active")) {
@@ -205,8 +248,8 @@ export default function Navbar() {
     }
   };
 
-  // Links array for easy mapping
   const links = [
+    { to: "/", label: "Home", end: true },
     { to: "/about", label: "About" },
     { to: "/services", label: "Services" },
     { to: "/projects", label: "Projects" },
@@ -217,8 +260,18 @@ export default function Navbar() {
   return (
     <nav style={navStyle}>
       <div style={containerStyle}>
-        <Link to="/" style={brandStyle} tabIndex={0}>
-          LINUXe native
+        <Link
+          to="/"
+          style={logoColumnStyle}
+          tabIndex={0}
+          aria-label="LINUXe native Home"
+        >
+          <img
+            src="https://res.cloudinary.com/dqv8rh26a/image/upload/v1748384102/LinuxeLogo_bxu0fk.png"
+            alt="LINUXe native Logo"
+            style={logoImageStyle}
+          />
+          <span style={brandBarStyle}>LINUXe native</span>
         </Link>
         {/* Desktop links */}
         <div style={responsive.navLinks}>
@@ -226,6 +279,7 @@ export default function Navbar() {
             <NavLink
               key={link.to}
               to={link.to}
+              end={link.end}
               style={({ isActive }) =>
                 isActive ? { ...linkBase, ...activeLink } : linkBase
               }
@@ -273,6 +327,7 @@ export default function Navbar() {
             <NavLink
               key={link.to}
               to={link.to}
+              end={link.end}
               style={({ isActive }) =>
                 isActive ? { ...linkBase, ...activeLink } : linkBase
               }
@@ -286,6 +341,11 @@ export default function Navbar() {
           ))}
         </div>
       </div>
+      {/* Orbitron font for branding */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@800&display=swap"
+        rel="stylesheet"
+      />
     </nav>
   );
 }

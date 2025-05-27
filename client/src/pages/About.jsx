@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // add this
 import { FaReact, FaNodeJs } from "react-icons/fa";
 import {
   SiTailwindcss,
@@ -25,11 +26,10 @@ const interestIcons = {
 };
 
 const About = () => {
-  // All hooks called at the top level, unconditionally
   const [aboutData, setAboutData] = useState(null);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
+  const navigate = useNavigate(); // initialize navigate
 
-  // Fetch about data from backend
   useEffect(() => {
     fetch("http://localhost:5000/api/about")
       .then((res) => res.json())
@@ -37,7 +37,6 @@ const About = () => {
       .catch(() => setAboutData(null));
   }, []);
 
-  // Parallax effect for background image
   useEffect(() => {
     const handleMouseMove = (e) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 40;
@@ -48,7 +47,6 @@ const About = () => {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Early return for loading state
   if (!aboutData)
     return (
       <div
@@ -63,7 +61,6 @@ const About = () => {
       </div>
     );
 
-  // Defensive fallback for hero/background
   const hero = aboutData.hero || {};
   const gradient = hero.gradient || "linear-gradient(90deg, #ff57b2 20%, #a165f7 60%, #3ec6f6 100%)";
   const background =
@@ -247,8 +244,7 @@ const About = () => {
         )}
 
         {hero.cta && (
-          <a
-            href={hero.cta.link || "#contact"}
+          <button
             style={{
               display: "inline-block",
               padding: "18px 48px",
@@ -264,6 +260,7 @@ const About = () => {
               pointerEvents: "all",
               transition: "filter 0.18s, box-shadow .2s",
               filter: "drop-shadow(0 2px 16px #3ec6f655)",
+              cursor: "pointer"
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.filter = "brightness(1.15)";
@@ -273,9 +270,10 @@ const About = () => {
               e.currentTarget.style.filter = "none";
               e.currentTarget.style.boxShadow = "0 2px 24px #3ec6f633";
             }}
+            onClick={() => navigate("/projects")}
           >
             {hero.cta.label || "VIEW MY WORK"}
-          </a>
+          </button>
         )}
       </section>
 
@@ -305,7 +303,7 @@ const About = () => {
         @media (max-width: 600px) {
           h1 { font-size: 2.2rem !important; }
           p { font-size: 1.08rem !important; }
-          a[style] { font-size: 1rem !important; padding: 14px 22px !important; }
+          button[style] { font-size: 1rem !important; padding: 14px 22px !important; }
         }
       `}</style>
     </div>
