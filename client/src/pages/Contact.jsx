@@ -1,223 +1,140 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FaLinkedin, FaGithub, FaEnvelope } from "react-icons/fa";
+import { FaEnvelope, FaLinkedin, FaGithub, FaPhone } from "react-icons/fa";
 
-const initialState = {
-  name: "",
-  email: "",
-  message: "",
-};
+const Contact = () => {
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState(""); // "success", "error", or ""
 
-export default function Contact() {
-  const [form, setForm] = useState(initialState);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
-
-  // Handle input change
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setError(""); // Clear error on user change
-    setSuccess(""); // Clear success on typing again
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
-    setLoading(true);
-
-    // Basic validation
-    if (!form.name || !form.email || !form.message) {
-      setError("All fields are required.");
-      setLoading(false);
-      return;
-    }
-
+    setStatus(""); // Reset before new attempt
     try {
-      const res = await fetch("/api/contacts", {
+      const response = await fetch("/api/contacts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setSuccess("Thank you! Your message has been sent.");
-        setForm(initialState);
+      if (response.ok) {
+        setStatus("success");
+        setForm({ name: "", email: "", message: "" });
       } else {
-        setError(data.error || "Something went wrong. Please try again.");
+        setStatus("error");
       }
-    } catch (err) {
-      setError("Server error. Please try again.");
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      setStatus("error");
     }
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 35 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="contact-container"
+    <div
       style={{
-        maxWidth: 480,
-        margin: "3rem auto",
+        maxWidth: 400,
+        margin: "40px auto",
         background: "#18181b",
-        borderRadius: 12,
-        padding: "2rem 2.5rem",
-        boxShadow: "0 4px 32px rgba(0,0,0,0.18)",
+        borderRadius: 16,
+        padding: 32,
+        boxShadow: "0 10px 26px rgba(0,0,0,0.1)",
       }}
     >
-      <h2
-        style={{
-          textAlign: "center",
-          marginBottom: "1rem",
-          color: "#fff",
-          fontSize: "2rem",
-          fontWeight: 700,
-          letterSpacing: "0.01em",
-        }}
-      >
+      <h2 style={{ textAlign: "center", color: "#fff", marginBottom: 24 }}>
         Contact Me
       </h2>
-
-      <form onSubmit={handleSubmit} autoComplete="off" aria-label="Contact form">
-        {/* Name */}
-        <div style={{ marginBottom: 18 }}>
-          <label htmlFor="name" style={{ color: "#fff", fontWeight: 500 }}>
-            Name
-          </label>
+      <form onSubmit={handleSubmit} autoComplete="off">
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ color: "#fff" }}>Name</label>
           <input
-            id="name"
-            name="name"
             type="text"
-            autoComplete="name"
+            name="name"
             value={form.name}
             onChange={handleChange}
             required
             style={{
               width: "100%",
-              padding: "10px 12px",
+              padding: 10,
               borderRadius: 6,
-              border: "1px solid #52525b",
+              border: "none",
               marginTop: 6,
-              background: "#232336",
+              fontSize: 16,
+              background: "#23232a",
               color: "#fff",
-              fontSize: "1rem",
             }}
-            aria-required="true"
-            aria-label="Your name"
           />
         </div>
-        {/* Email */}
-        <div style={{ marginBottom: 18 }}>
-          <label htmlFor="email" style={{ color: "#fff", fontWeight: 500 }}>
-            Email
-          </label>
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ color: "#fff" }}>Email</label>
           <input
-            id="email"
-            name="email"
             type="email"
-            autoComplete="email"
+            name="email"
             value={form.email}
             onChange={handleChange}
             required
             style={{
               width: "100%",
-              padding: "10px 12px",
+              padding: 10,
               borderRadius: 6,
-              border: "1px solid #52525b",
+              border: "none",
               marginTop: 6,
-              background: "#232336",
+              fontSize: 16,
+              background: "#23232a",
               color: "#fff",
-              fontSize: "1rem",
             }}
-            aria-required="true"
-            aria-label="Your email address"
           />
         </div>
-        {/* Message */}
-        <div style={{ marginBottom: 18 }}>
-          <label htmlFor="message" style={{ color: "#fff", fontWeight: 500 }}>
-            Message
-          </label>
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ color: "#fff" }}>Message</label>
           <textarea
-            id="message"
             name="message"
-            rows={5}
             value={form.message}
             onChange={handleChange}
             required
+            rows={5}
             style={{
               width: "100%",
-              padding: "10px 12px",
+              padding: 10,
               borderRadius: 6,
-              border: "1px solid #52525b",
+              border: "none",
               marginTop: 6,
-              background: "#232336",
+              fontSize: 16,
+              background: "#23232a",
               color: "#fff",
-              fontSize: "1rem",
               resize: "vertical",
             }}
-            aria-required="true"
-            aria-label="Your message"
           />
         </div>
-
-        {/* Error message */}
-        {error && (
-          <div
-            style={{
-              color: "#fb7185",
-              marginBottom: "12px",
-              fontWeight: 500,
-            }}
-            role="alert"
-            aria-live="assertive"
-          >
-            {error}
+        {status === "success" && (
+          <div style={{ color: "#10b981", marginBottom: 10 }}>
+            Thank you! Your message has been sent.
           </div>
         )}
-        {/* Success message */}
-        {success && (
-          <div
-            style={{
-              color: "#22d3ee",
-              marginBottom: "12px",
-              fontWeight: 500,
-            }}
-            role="status"
-            aria-live="polite"
-          >
-            {success}
+        {status === "error" && (
+          <div style={{ color: "#ef4444", marginBottom: 10 }}>
+            Server error. Please try again.
           </div>
         )}
-
         <button
           type="submit"
-          disabled={loading}
           style={{
             width: "100%",
-            padding: "12px",
             background: "#ec4899",
             color: "#fff",
-            border: "none",
-            borderRadius: 6,
-            fontSize: "1.1rem",
             fontWeight: 600,
-            cursor: loading ? "not-allowed" : "pointer",
-            marginBottom: 12,
+            fontSize: 18,
+            border: "none",
+            borderRadius: 8,
+            padding: "12px 0",
+            marginTop: 10,
+            cursor: "pointer",
             transition: "background 0.2s",
           }}
-          aria-label={loading ? "Sending..." : "Send message"}
         >
-          {loading ? "Sending..." : "Send Message"}
+          Send Message
         </button>
       </form>
-
-      {/* Social/contact icons */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -226,6 +143,13 @@ export default function Contact() {
       >
         <div style={{ margin: "18px 0 8px 0" }}>
           <a
+            href="tel:+2348037482059"
+            aria-label="Phone"
+            style={{ color: "#ec4899", margin: "0 12px", fontSize: "2rem" }}
+          >
+            <FaPhone />
+          </a>
+          <a
             href="mailto:nwankwolinus9@gmail.com"
             aria-label="Email"
             style={{ color: "#ec4899", margin: "0 12px", fontSize: "2rem" }}
@@ -233,34 +157,45 @@ export default function Contact() {
             <FaEnvelope />
           </a>
           <a
-            href="https://www.linkedin.com/in/linus-nwankwo-049942b5"
+            href="https://linkedin.com/in/your-linkedin"
             aria-label="LinkedIn"
-            style={{ color: "#ec4899", margin: "0 12px", fontSize: "2rem" }}
             target="_blank"
             rel="noopener noreferrer"
+            style={{ color: "#ec4899", margin: "0 12px", fontSize: "2rem" }}
           >
             <FaLinkedin />
           </a>
           <a
             href="https://github.com/nwankwolinus"
             aria-label="GitHub"
-            style={{ color: "#ec4899", margin: "0 12px", fontSize: "2rem" }}
             target="_blank"
             rel="noopener noreferrer"
+            style={{ color: "#ec4899", margin: "0 12px", fontSize: "2rem" }}
           >
             <FaGithub />
           </a>
         </div>
-        <div>
+        <div style={{ margin: "10px 0 0 0", fontSize: "1rem" }}>
+          Or call:{" "}
+          <a
+            href="tel:+2348037482059"
+            style={{ color: "#ec4899", textDecoration: "underline" }}
+          >
+            +2348037482059
+          </a>
+        </div>
+        <div style={{ margin: "10px 0 0 0", fontSize: "1rem" }}>
           Or email:{" "}
           <a
             href="mailto:nwankwolinus9@gmail.com"
-            style={{ color: "#ec4899" }}
+            style={{ color: "#ec4899", textDecoration: "underline" }}
           >
             nwankwolinus9@gmail.com
           </a>
         </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
-}
+};
+
+export default Contact;
