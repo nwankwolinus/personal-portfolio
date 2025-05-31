@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from "./Navbar";
+import Footer from './Footer';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import About from "./pages/About";
 import Service from './pages/Service';
@@ -23,6 +24,7 @@ function App() {
           <Route path="/testimonials" element={<Testimonial />} />
           <Route path="/contacts" element={<Contact />} />
         </Routes>
+        <Footer />
       </div>
     </Router>
   )
