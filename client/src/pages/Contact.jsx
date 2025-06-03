@@ -83,20 +83,22 @@ const Contact = () => {
         >
           Contact Me
         </motion.h2>
-        <form onSubmit={handleSubmit} autoComplete="off">
+        <form onSubmit={handleSubmit} autoComplete="on">
           <motion.div
             initial={{ opacity: 0, x: -32 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.15, duration: 0.5 }}
             style={{ marginBottom: 16 }}
           >
-            <label style={{ color: "#fff" }}>Name</label>
+            <label htmlFor="contact-name" style={{ color: "#fff" }}>Name</label>
             <input
+              id="contact-name"
               type="text"
               name="name"
               value={form.name}
               onChange={handleChange}
               required
+              autoComplete="name"
               style={{
                 width: "100%",
                 padding: 10,
@@ -115,13 +117,15 @@ const Contact = () => {
             transition={{ delay: 0.22, duration: 0.5 }}
             style={{ marginBottom: 16 }}
           >
-            <label style={{ color: "#fff" }}>Email</label>
+            <label htmlFor="contact-email" style={{ color: "#fff" }}>Email</label>
             <input
+              id="contact-email"
               type="email"
               name="email"
               value={form.email}
               onChange={handleChange}
               required
+              autoComplete="email"
               style={{
                 width: "100%",
                 padding: 10,
@@ -140,13 +144,15 @@ const Contact = () => {
             transition={{ delay: 0.29, duration: 0.5 }}
             style={{ marginBottom: 16 }}
           >
-            <label style={{ color: "#fff" }}>Message</label>
+            <label htmlFor="contact-message" style={{ color: "#fff" }}>Message</label>
             <textarea
+              id="contact-message"
               name="message"
               value={form.message}
               onChange={handleChange}
               required
               rows={5}
+              autoComplete="off"
               style={{
                 width: "100%",
                 padding: 10,

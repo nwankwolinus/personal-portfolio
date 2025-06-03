@@ -125,7 +125,7 @@ const barStyle = {
 };
 
 const getResponsiveStyles = (menuOpen) => {
-  const MOBILE_BREAKPOINT = 760;
+  const MOBILE_BREAKPOINT = 605; // Hamburger appears at width <= 605px
   const windowWidth = typeof window !== "undefined" ? window.innerWidth : 1200;
 
   const baseMobileMenu = {
@@ -150,7 +150,7 @@ const getResponsiveStyles = (menuOpen) => {
     minHeight: "140px"
   };
 
-  if (windowWidth < MOBILE_BREAKPOINT) {
+  if (windowWidth <= MOBILE_BREAKPOINT) {
     return {
       navLinks: { display: "none" },
       hamburger: { display: "flex" },
@@ -218,12 +218,14 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [responsive, setResponsive] = useState(getResponsiveStyles(false));
 
+  // Ensures correct state on initial mount and on resize
   useEffect(() => {
     function handleResize() {
       setResponsive(getResponsiveStyles(menuOpen));
-      if (window.innerWidth >= 760) setMenuOpen(false);
+      if (window.innerWidth > 605) setMenuOpen(false);
     }
     window.addEventListener("resize", handleResize);
+    handleResize(); // Force calculation on mount
     return () => window.removeEventListener("resize", handleResize);
   }, [menuOpen]);
 

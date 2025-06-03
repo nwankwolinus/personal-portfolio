@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 // Animated SVG social icons
 const socialIcons = [
@@ -45,6 +45,36 @@ const quickLinks = [
 ];
 
 export default function Footer() {
+  // Shared message/email logic (sync with Contact.jsx)
+  const [form, setForm] = useState({ email: "", message: "" });
+  const [status, setStatus] = useState("");
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("");
+    // For just newsletter, you can omit "message" or send a default one
+    const payload = { name: "Newsletter Signup", ...form, message: form.message || "Newsletter subscription" };
+    try {
+      const response = await fetch("/api/contacts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) {
+        setStatus("success");
+        setForm({ email: "", message: "" });
+      } else {
+        setStatus("error");
+      }
+    } catch (error) {
+      setStatus("error");
+    }
+  };
+
   return (
     <footer style={{
       position: "relative",
@@ -122,7 +152,7 @@ export default function Footer() {
               height={56}
               style={{
                 borderRadius: "50%",
-                background: "transparent", // transparent logo
+                background: "transparent",
                 padding: 2,
                 boxShadow: "0 2px 14px #ec489933",
                 filter: "drop-shadow(0 4px 16px #ec489983)"
@@ -142,8 +172,14 @@ export default function Footer() {
             </span>
           </div>
           <p style={{color: "#b7b7c9", fontSize: 17, lineHeight: 1.7, marginBottom: 18, maxWidth: 420}}>
-            Empowering your digital transformation with robust Linux-based solutions, seamless cloud integration, and innovative open-source technologies.
-            <br/>
+            <strong>LINUXe native</strong> delivers modern web solutions, creative user experiences, and robust backend APIs.<br />
+            <span style={{color:"#ec4899"}}>
+              Beautiful, responsive, and blazing-fast websites.
+            </span><br />
+            <span style={{color:"#a165f7"}}>
+              Also a passionate <strong>AI Engineer</strong>: I love building intelligent systems and deploying machine learning models!
+            </span>
+            <br />
             <span style={{color:"#ec4899", fontWeight:600}}>Let's build the future together.</span>
           </p>
           <div style={{display: "flex", gap: 18, alignItems: "center", marginBottom: 8}}>
@@ -211,12 +247,8 @@ export default function Footer() {
         {/* Contact/Newsletter */}
         <div style={{flex: 2, minWidth: 250, maxWidth: 340}}>
           <h4 style={{color: "#fff", fontSize: 17, marginBottom: 14, letterSpacing:1}}>Stay in Touch</h4>
-          <form
-            action="https://formspree.io/f/xayzazrq" // Replace with your form endpoint!
-            method="POST"
-            style={{marginBottom: 18}}
-          >
-            <label htmlFor="footer-email" style={{display: "block", color: "#b7b7c9", marginBottom: 4, fontSize: 14}}>Subscribe for updates:</label>
+          <form onSubmit={handleSubmit} style={{marginBottom: 18}} autoComplete="on">
+            <label htmlFor="footer-email" style={{display: "block", color: "#b7b7c9", marginBottom: 4, fontSize: 14}}>Subscribe or message me:</label>
             <div style={{display:"flex", gap: 0}}>
               <input
                 type="email"
@@ -224,6 +256,9 @@ export default function Footer() {
                 id="footer-email"
                 required
                 placeholder="Enter your email"
+                value={form.email}
+                onChange={handleChange}
+                autoComplete="email"
                 style={{
                   padding: "8px 12px",
                   border: "none",
@@ -257,13 +292,42 @@ export default function Footer() {
                 Subscribe
               </button>
             </div>
+            <textarea
+              name="message"
+              placeholder="Write a quick message (optional)"
+              value={form.message}
+              onChange={handleChange}
+              rows={2}
+              autoComplete="off"
+              style={{
+                width: "100%",
+                marginTop: 8,
+                padding: "8px",
+                borderRadius: 8,
+                background: "#23243D",
+                color: "#fff",
+                border: "none",
+                fontSize: 15,
+                resize: "vertical"
+              }}
+            />
+            {status === "success" && (
+              <div style={{ color: "#10b981", marginTop: 8 }}>
+                Thank you! Your message has been sent.
+              </div>
+            )}
+            {status === "error" && (
+              <div style={{ color: "#ef4444", marginTop: 8 }}>
+                Server error. Please try again.
+              </div>
+            )}
           </form>
           <div style={{color:"#b7b7c9", fontSize:15, lineHeight:1.7}}>
             <div>
-              <span style={{color:"#ec4899", fontWeight:600}}>Email:</span> <a href="mailto:info@linuxenative.com" style={{color:"#b7b7c9"}}>info@linuxenative.com</a>
+              <span style={{color:"#ec4899", fontWeight:600}}>Email:</span> <a href="mailto:nwankwolinus9@gmail.com" style={{color:"#b7b7c9"}}>nwankwolinus9@gmail.com</a>
             </div>
             <div>
-              <span style={{color:"#ec4899", fontWeight:600}}>Phone:</span> <a href="tel:+1234567890" style={{color:"#b7b7c9"}}>+1 (234) 567-890</a>
+              <span style={{color:"#ec4899", fontWeight:600}}>Phone:</span> <a href="tel:+2348037482059" style={{color:"#b7b7c9"}}>+2348037482059</a>
             </div>
             <div>
               <span style={{color:"#ec4899", fontWeight:600}}>Location:</span> 123 Open Source Ave, Tech City, World
