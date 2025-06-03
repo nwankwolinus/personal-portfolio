@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 
+// Use Vite environment variable, fallback to "/api"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+
 const ProjectCard = ({ title, description, tech, live, github }) => (
   <div className="project-card">
     <h3 className="project-title">{title}</h3>
@@ -31,7 +34,7 @@ const Project = () => {
   const [fetchError, setFetchError] = useState(null);
 
   useEffect(() => {
-    fetch('/api/projects')
+    fetch(`${API_BASE_URL}/projects`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch projects");
         return res.json();

@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { MdDesignServices } from "react-icons/md";
 import { FaReact, FaNodeJs, FaFileAlt, FaFileSignature, FaImage, FaSearch, FaRobot } from "react-icons/fa";
 
+// Use Vite environment variable for API base URL, fallback to "/api"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+
 // Icon mapping
 const iconMap = {
   MdDesignServices: <MdDesignServices size={38} color="#ff57b2" />,
@@ -18,7 +21,7 @@ const Service = () => {
   const [services, setServices] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/services")
+    fetch(`${API_BASE_URL}/services`)
       .then((res) => res.json())
       .then((data) => setServices(data))
       .catch(() => setServices([]));

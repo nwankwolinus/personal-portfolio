@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
+const path = require("path");
 
 const app = express();
 
@@ -41,7 +42,7 @@ mongoose.connection.once("open", () => {
 app.use("/api/about", require("./routes/about"));
 app.use("/api/services", require("./routes/service"));
 app.use("/api/projects", require("./routes/project"));
-app.use("/api/contacts", require("./routes/contact")); // <-- This enables POST /api/contacts
+app.use("/api/contacts", require("./routes/contact")); // POST /api/contacts
 app.use("/api/testimonials", require("./routes/testimonial"));
 
 // Error handling middleware (for cleaner error messages)
@@ -49,5 +50,19 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Server error. Please try again later." });
 });
+
+// --- Serve React static build in production ---
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "client/build")));
+
+  // For any route not starting with /api, serve React's index.html
+  app.get("*", (req, res) => {
+    if (req.method === "GET" && !req.originalUrl.startsWith("/api")) {
+      res.sendFile(path.join(__dirname, "client/build", "index.html"));
+    } else {
+      res.status(404).end();
+    }
+  });
+}
 
 module.exports = app;

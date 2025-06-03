@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaEnvelope, FaLinkedin, FaGithub, FaPhone } from "react-icons/fa";
 
+// Use Vite environment variable for API base URL, fallback to "/api"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+
 const containerVariants = {
   hidden: { opacity: 0, y: 40 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, type: "spring" } },
@@ -34,7 +37,7 @@ const Contact = () => {
     e.preventDefault();
     setStatus(""); // Reset before new attempt
     try {
-      const response = await fetch("/api/contacts", {
+      const response = await fetch(`${API_BASE_URL}/contacts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

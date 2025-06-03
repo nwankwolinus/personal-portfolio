@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 
+// Use Vite environment variable for API base URL, fallback to "/api"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+
 const cardVariants = {
   hidden: { opacity: 0, y: 40, scale: 0.92 },
   visible: (i) => ({
@@ -36,7 +39,7 @@ const Testimonial = () => {
   const [testimonials, setTestimonials] = useState([]);
 
   useEffect(() => {
-    fetch("/api/testimonials")
+    fetch(`${API_BASE_URL}/testimonials`)
       .then((res) => res.json())
       .then((data) => setTestimonials(data))
       .catch(() => setTestimonials([]));

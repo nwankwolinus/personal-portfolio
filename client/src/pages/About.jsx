@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // add this
+import { useNavigate } from "react-router-dom";
 import { FaReact, FaNodeJs } from "react-icons/fa";
 import {
   SiTailwindcss,
@@ -10,7 +10,9 @@ import {
 } from "react-icons/si";
 import { MdDesignServices } from "react-icons/md";
 
-// Icon mapping helpers
+// Vite environment variable for API base URL, fallback to "/api"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+
 const skillIcons = {
   React: <FaReact color="#61DBFB" />,
   "Tailwind CSS": <SiTailwindcss color="#38BDF8" />,
@@ -28,10 +30,10 @@ const interestIcons = {
 const About = () => {
   const [aboutData, setAboutData] = useState(null);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
-  const navigate = useNavigate(); // initialize navigate
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/about")
+    fetch(`${API_BASE_URL}/about`)
       .then((res) => res.json())
       .then((data) => setAboutData(data))
       .catch(() => setAboutData(null));
